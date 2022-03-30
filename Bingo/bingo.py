@@ -2,9 +2,10 @@
 This software is made as a visualization tool for Bingo host to show what numbers have allready came during the game.
 '''
 
+from string import whitespace
 import tkinter as tk
 
-from tkinter import Menu
+from tkinter import Menu, Label
 from tkinter import font as tkFont
 
 GRID_X_START = 480
@@ -20,12 +21,20 @@ class Bingo_board:
 
     def __init__(self, mainwindow_root):
         self.mainwindow = mainwindow_root
-        self.__create_menu()
         self.buttons: list = []
-        self.__create_buttons()
         self.is_fullscreen = False
 
-        self.mainwindow.bind("<Escape>", lambda x: root.destroy())
+        self.__create_buttons()
+        self.__create_menu()
+        self.__create_labels()
+
+    def __create_labels(self):
+        Upper_right = tk.Label(root, text = "Bingo", bg = "white", bd = 5,padx = 1, pady = 1, fg = "black", font = "Castellar", height = 3, width = 20, relief = "solid")
+ 
+        # using place method we can set the position of label
+        Upper_right.place(relx = 0.06,
+                        rely = 0.055,
+                        anchor ='nw')
 
     def __create_buttons(self):
         '''
@@ -42,7 +51,7 @@ class Bingo_board:
         for _ in range(9):
             for _ in range(10):
                 new_button = tk.Button(self.mainwindow, text=str(bingo_index), bg='white', height = 2, 
-                                         width = 5, font=font, command=lambda index=bingo_index - 1: self.__change_button_color(index))
+                                         width = 5, font=font, command=lambda index=bingo_index - 1: self.__change_button_color(index), cursor = "target")
                 new_button.place(x= GRID_X_START + x_delta, y= GRID_Y_START + y_delta)
                 self.buttons.append(new_button)
                 
@@ -63,10 +72,15 @@ class Bingo_board:
         menu_bar = Menu(self.mainwindow)
         self.mainwindow.config(menu=menu_bar)
         Menu_toolbar = Menu(menu_bar)
-        Menu_toolbar.add_command(label="Exit software", command=self.__destroy_window)
+        Menu_toolbar.add_command(label='Reset board', command=self.__reset_board)
         Menu_toolbar.add_command(label='Full screen on/off', command=self.toggle_fullscreen)
+        Menu_toolbar.add_command(label="Exit software", command=self.__destroy_window)
         menu_bar.add_cascade(label="Options", menu=Menu_toolbar)
 
+    def __reset_board(self):
+        for button in self.buttons:
+            if button['bg'] != 'white':
+                button['bg'] = 'white'
 
     def __change_button_color(self, index) -> None:
         '''
@@ -104,8 +118,12 @@ if __name__ == '__main__':
     root.attributes("-fullscreen", False)  
 
     root.title("Bingo Screen")
+    #root.configure(bg='#F3F3D0')
 
     app = Bingo_board(root)
+
+    # Init key bindings for quicker access.
+    root.bind("<Escape>", lambda x: root.destroy())
 
     # Start game loop
     root.mainloop()
