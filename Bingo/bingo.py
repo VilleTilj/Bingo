@@ -141,6 +141,7 @@ class Bingo_board:
 if __name__ == '__main__':
     # Init mainwindow
     root = tk.Tk()
+    root.iconbitmap("icon.ico")
     ttk.Style().theme_use('vista')
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()   
